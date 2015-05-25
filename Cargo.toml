@@ -2,3 +2,6 @@
 name = "cargo-deps"
 version = "0.1.0"
 authors = ["Corey Farwell <coreyf@rwell.org>"]
+
+[dependencies]
+tiny_http = "*"
