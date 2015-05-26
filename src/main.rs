@@ -76,7 +76,6 @@ fn main() {
 
     println!("Server listening on port {}", port);
     for req in server.incoming_requests() {
-        { println!("{}", req.get_url().trim_left_matches("/")) }
         let response = match dep_map.get(req.get_url().trim_left_matches("/")) {
             Some(d) => d.iter().fold(String::new(), |acc, item| acc + ", " + &item),
             None => String::from("could not find crate"),
