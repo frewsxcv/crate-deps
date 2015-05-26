@@ -6,4 +6,5 @@ authors = ["Corey Farwell <coreyf@rwell.org>"]
 [dependencies]
 git2 = "*"
 glob = "*"
+rustc-serialize = "*"
 tiny_http = "*"

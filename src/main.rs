@@ -1,22 +1,52 @@
+use std::collections::HashMap;
 use std::env;
 use std::fs;
+use std::io::{BufReader, BufRead};
 
 extern crate git2;
 extern crate glob;
+extern crate rustc_serialize;
 extern crate tiny_http;
 
 
 static INDEX_GIT_URL: &'static str = "https://github.com/rust-lang/crates.io-index";
 static INDEX_LOCAL_PATH: &'static str = "crates.io-index";
 
+
+#[derive(RustcDecodable)]
+#[allow(dead_code)]
+struct CrateInfo {
+    name: String,
+    vers: String,
+    deps: Vec<DepInfo>,
+    cksum: String,
+    features: HashMap<String, Vec<String>>,
+    yanked: bool,
+}
+
+#[derive(RustcDecodable)]
+#[allow(dead_code)]
+struct DepInfo {
+    name: String,
+    req: String,
+    features: Vec<String>,
+    optional: bool,
+    default_features: bool,
+    target: Option<String>,
+    kind: Option<String>
+}
+
 fn build_dependency_map() {
-    let index_paths1 = glob::glob("crates.io-index/*/*/*").unwrap();
+    let index_paths1 = glob::glob("crates.io-index/[!.-]/*/*").unwrap();
     let index_paths2 = glob::glob("crates.io-index/[12]/*").unwrap();
 
     let index_paths = index_paths1.chain(index_paths2);
 
     for glob_result in index_paths {
         let index_path = glob_result.unwrap();
+        let file = fs::File::open(&index_path).unwrap();
+        let last_line = BufReader::new(file).lines().last().unwrap().unwrap();
+        let crate_info: CrateInfo = rustc_serialize::json::decode(&last_line).unwrap();
     }
 }
 
@@ -25,6 +55,8 @@ fn main() {
         println!("Cloning crates.io-index");
         git2::Repository::clone(INDEX_GIT_URL, INDEX_LOCAL_PATH).unwrap();
     }
+
+    build_dependency_map();
 
     let port = match env::var("PORT") {
         Ok(p) => p.parse::<u16>().unwrap(),
