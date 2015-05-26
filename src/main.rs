@@ -1,9 +1,14 @@
 use std::env;
 
+extern crate git2;
 extern crate tiny_http;
 
 
+static INDEX_GIT_URL: &'static str = "https://github.com/rust-lang/crates.io-index";
+
 fn main() {
+    git2::Repository::clone(INDEX_GIT_URL, "crates.io-index").unwrap();
+
     let port = match env::var("PORT") {
         Ok(p) => p.parse::<u16>().unwrap(),
         Err(..) => 8000,

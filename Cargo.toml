@@ -4,4 +4,5 @@ version = "0.1.0"
 authors = ["Corey Farwell <coreyf@rwell.org>"]
 
 [dependencies]
+git2 = "*"
 tiny_http = "*"
