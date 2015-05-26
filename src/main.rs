@@ -2,11 +2,23 @@ use std::env;
 use std::fs;
 
 extern crate git2;
+extern crate glob;
 extern crate tiny_http;
 
 
 static INDEX_GIT_URL: &'static str = "https://github.com/rust-lang/crates.io-index";
 static INDEX_LOCAL_PATH: &'static str = "crates.io-index";
+
+fn build_dependency_map() {
+    let index_paths1 = glob::glob("crates.io-index/*/*/*").unwrap();
+    let index_paths2 = glob::glob("crates.io-index/[12]/*").unwrap();
+
+    let index_paths = index_paths1.chain(index_paths2);
+
+    for glob_result in index_paths {
+        let index_path = glob_result.unwrap();
+    }
+}
 
 fn main() {
     if fs::metadata(INDEX_LOCAL_PATH).is_err() {

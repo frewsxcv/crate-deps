@@ -5,4 +5,5 @@ authors = ["Corey Farwell <coreyf@rwell.org>"]
 
 [dependencies]
 git2 = "*"
+glob = "*"
 tiny_http = "*"
