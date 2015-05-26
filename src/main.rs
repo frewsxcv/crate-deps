@@ -36,18 +36,23 @@ struct DepInfo {
     kind: Option<String>
 }
 
-fn build_dependency_map() {
+fn build_dependency_map() -> HashMap<String, Vec<String>> {
     let index_paths1 = glob::glob("crates.io-index/[!.-]/*/*").unwrap();
     let index_paths2 = glob::glob("crates.io-index/[12]/*").unwrap();
 
     let index_paths = index_paths1.chain(index_paths2);
 
-    for glob_result in index_paths {
-        let index_path = glob_result.unwrap();
+    let mut map = HashMap::new();
+
+    for glob_result in index_paths { let index_path = glob_result.unwrap();
         let file = fs::File::open(&index_path).unwrap();
         let last_line = BufReader::new(file).lines().last().unwrap().unwrap();
         let crate_info: CrateInfo = rustc_serialize::json::decode(&last_line).unwrap();
+        let deps_names = crate_info.deps.iter().map(|d| d.name.clone()).collect();
+        map.insert(crate_info.name, deps_names);
     }
+
+    map
 }
 
 fn main() {
@@ -56,7 +61,7 @@ fn main() {
         git2::Repository::clone(INDEX_GIT_URL, INDEX_LOCAL_PATH).unwrap();
     }
 
-    build_dependency_map();
+    let dep_map = build_dependency_map();
 
     let port = match env::var("PORT") {
         Ok(p) => p.parse::<u16>().unwrap(),
