@@ -7,6 +7,7 @@ extern crate tiny_http;
 static INDEX_GIT_URL: &'static str = "https://github.com/rust-lang/crates.io-index";
 
 fn main() {
+    println!("Cloning crates.io-index");
     git2::Repository::clone(INDEX_GIT_URL, "crates.io-index").unwrap();
 
     let port = match env::var("PORT") {
@@ -16,6 +17,7 @@ fn main() {
 
     let server = tiny_http::ServerBuilder::new().with_port(port).build().unwrap();
 
+    println!("Server listening on port {}", port);
     for request in server.incoming_requests() {
         println!("received request! method: {:?}, url: {:?}, headers: {:?}",
             request.get_method(),
