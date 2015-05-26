@@ -47,7 +47,8 @@ fn build_dependency_map() -> HashMap<String, Vec<String>> {
 
     let mut map = HashMap::new();
 
-    for glob_result in index_paths { let index_path = glob_result.unwrap();
+    for glob_result in index_paths {
+        let index_path = glob_result.unwrap();
         let file = fs::File::open(&index_path).unwrap();
         let last_line = BufReader::new(file).lines().last().unwrap().unwrap();
         let crate_info: CrateInfo = rustc_serialize::json::decode(&last_line).unwrap();
