@@ -37,8 +37,11 @@ struct DepInfo {
 }
 
 fn build_dependency_map() -> HashMap<String, Vec<String>> {
-    let index_paths1 = glob::glob("crates.io-index/[!.-]/*/*").unwrap();
-    let index_paths2 = glob::glob("crates.io-index/[12]/*").unwrap();
+    let mut match_options = glob::MatchOptions::new();
+    match_options.require_literal_leading_dot = true;
+
+    let index_paths1 = glob::glob_with("crates.io-index/*/*/*", &match_options).unwrap();
+    let index_paths2 = glob::glob_with("crates.io-index/[12]/*", &match_options).unwrap();
 
     let index_paths = index_paths1.chain(index_paths2);
 
