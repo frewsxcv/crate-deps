@@ -1,4 +1,6 @@
 use std::env;
+use std::fs;
+use std::path;
 
 extern crate git2;
 extern crate tiny_http;
@@ -8,8 +10,10 @@ static INDEX_GIT_URL: &'static str = "https://github.com/rust-lang/crates.io-ind
 static INDEX_LOCAL_PATH: &'static str = "crates.io-index";
 
 fn main() {
-    println!("Cloning crates.io-index");
-    git2::Repository::clone(INDEX_GIT_URL, INDEX_LOCAL_PATH).unwrap();
+    if fs::metadata(path::Path::new(INDEX_LOCAL_PATH)).is_err() {
+        println!("Cloning crates.io-index");
+        git2::Repository::clone(INDEX_GIT_URL, INDEX_LOCAL_PATH).unwrap();
+    }
 
     let port = match env::var("PORT") {
         Ok(p) => p.parse::<u16>().unwrap(),
