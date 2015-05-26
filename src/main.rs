@@ -75,14 +75,14 @@ fn main() {
     let server = tiny_http::ServerBuilder::new().with_port(port).build().unwrap();
 
     println!("Server listening on port {}", port);
-    for request in server.incoming_requests() {
-        println!("received request! method: {:?}, url: {:?}, headers: {:?}",
-            request.get_method(),
-            request.get_url(),
-            request.get_headers()
-        );
+    for req in server.incoming_requests() {
+        { println!("{}", req.get_url().trim_left_matches("/")) }
+        let response = match dep_map.get(req.get_url().trim_left_matches("/")) {
+            Some(d) => d.iter().fold(String::new(), |acc, item| acc + ", " + &item),
+            None => String::from("could not find crate"),
+        };
 
-        let response = tiny_http::Response::from_string("hello world".to_string());
-        request.respond(response);
+        let response = tiny_http::Response::from_string(response);
+        req.respond(response);
     }
 }
