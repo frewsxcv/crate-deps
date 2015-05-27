@@ -59,11 +59,20 @@ fn build_dependency_map() -> HashMap<String, Vec<String>> {
     map
 }
 
-fn build_dot(crate_name: &str, mut crate_deps: Vec<String>, dep_map: &HashMap<String, Vec<String>>) -> String {
-    while let Some(crate_dep) = crate_deps.pop() {
-        println!("{}", crate_dep);
+fn build_dot(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> String {
+    let mut crate_names = vec![crate_name];
+
+    let mut dot = String::new();
+    dot.push_str("digraph graphname {");
+
+    while let Some(crate_name) = crate_names.pop() {
+        for crate_dep in dep_map.get(crate_name).unwrap() {
+            dot.push_str(&format!("{} -> {};", crate_name.replace("-", "_"), crate_dep.replace("-", "_")))
+        }
     }
-    String::from("FIXME")
+    dot.push_str("}");
+
+    dot
 }
 
 fn main() {
@@ -72,7 +81,7 @@ fn main() {
         git2::Repository::clone(INDEX_GIT_URL, INDEX_LOCAL_PATH).unwrap();
     }
 
-    let mut dep_map = build_dependency_map();
+    let dep_map = build_dependency_map();
 
     let port = match env::var("PORT") {
         Ok(p) => p.parse::<u16>().unwrap(),
@@ -83,11 +92,10 @@ fn main() {
 
     println!("Server listening on port {}", port);
     for req in server.incoming_requests() {
-        let response = match dep_map.get(req.get_url().trim_left_matches("/")) {
-            Some(d) => {
-                build_dot(req.get_url().trim_left_matches("/"), d.clone(), &dep_map)
-            },
-            None => String::from("could not find crate"),
+        let response = if dep_map.get(req.get_url().trim_left_matches("/")).is_some() {
+            build_dot(req.get_url().trim_left_matches("/"), &dep_map)
+        } else {
+            String::from("could not find crate")
         };
 
         let response = tiny_http::Response::from_string(response);
