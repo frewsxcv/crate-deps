@@ -59,13 +59,20 @@ fn build_dependency_map() -> HashMap<String, Vec<String>> {
     map
 }
 
+fn build_dot(crate_name: &str, mut crate_deps: Vec<String>, dep_map: &HashMap<String, Vec<String>>) -> String {
+    while let Some(crate_dep) = crate_deps.pop() {
+        println!("{}", crate_dep);
+    }
+    String::from("FIXME")
+}
+
 fn main() {
     if fs::metadata(INDEX_LOCAL_PATH).is_err() {
         println!("Cloning crates.io-index");
         git2::Repository::clone(INDEX_GIT_URL, INDEX_LOCAL_PATH).unwrap();
     }
 
-    let dep_map = build_dependency_map();
+    let mut dep_map = build_dependency_map();
 
     let port = match env::var("PORT") {
         Ok(p) => p.parse::<u16>().unwrap(),
@@ -77,7 +84,9 @@ fn main() {
     println!("Server listening on port {}", port);
     for req in server.incoming_requests() {
         let response = match dep_map.get(req.get_url().trim_left_matches("/")) {
-            Some(d) => d.iter().fold(String::new(), |acc, item| acc + ", " + &item),
+            Some(d) => {
+                build_dot(req.get_url().trim_left_matches("/"), d.clone(), &dep_map)
+            },
             None => String::from("could not find crate"),
         };
 
