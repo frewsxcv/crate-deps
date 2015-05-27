@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 use std::env;
 use std::fs;
-use std::io::{BufReader, BufRead};
+use std::io::{BufReader, BufRead, Write, Read};
+use std::process::{Command, Stdio};
 
 extern crate git2;
 extern crate glob;
@@ -72,7 +73,14 @@ fn build_dot(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> String
     }
     dot.push_str("}");
 
-    dot
+    let child = Command::new("dot").arg("-Tsvg").stdin(Stdio::piped()).stdout(Stdio::piped()).spawn().unwrap();
+    {
+        child.stdin.unwrap().write_all(dot.as_bytes()).unwrap();
+    }
+
+    let mut ret = String::new();
+    child.stdout.unwrap().read_to_string(&mut ret).unwrap();
+    ret
 }
 
 fn main() {
@@ -93,12 +101,12 @@ fn main() {
     println!("Server listening on port {}", port);
     for req in server.incoming_requests() {
         let response = if dep_map.get(req.get_url().trim_left_matches("/")).is_some() {
-            build_dot(req.get_url().trim_left_matches("/"), &dep_map)
+            let string = build_dot(req.get_url().trim_left_matches("/"), &dep_map);
+            let res = tiny_http::Response::from_string(string);
+            res.with_header("Content-Type: image/svg+xml".parse::<tiny_http::Header>().unwrap())
         } else {
-            String::from("could not find crate")
+            tiny_http::Response::from_string("could not find crate")
         };
-
-        let response = tiny_http::Response::from_string(response);
         req.respond(response);
     }
 }
