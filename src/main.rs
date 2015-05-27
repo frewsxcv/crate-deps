@@ -33,6 +33,9 @@ fn build_dot(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8
     let mut seen_set = HashSet::new();
 
     while let Some(crate_name) = crate_names.pop() {
+        if seen_set.contains(crate_name as &str) {
+            continue;
+        }
         seen_set.insert(crate_name);
         for crate_dep in dep_map.get(crate_name).unwrap() {
             dot.push_str(&format!("{} -> {};", crate_name.replace("-", "_"), crate_dep.replace("-", "_")));
