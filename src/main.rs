@@ -1,64 +1,27 @@
+// Copyright 2015 Corey Farwell
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 use std::collections::{HashMap, HashSet};
 use std::env;
-use std::fs;
-use std::io::{BufReader, BufRead, Write, Read};
+use std::io::{Write, Read};
 use std::process::{Command, Stdio};
 
-extern crate git2;
-extern crate glob;
-extern crate rustc_serialize;
+extern crate crates_index;
 extern crate tiny_http;
 
-
-static INDEX_GIT_URL: &'static str = "https://github.com/rust-lang/crates.io-index";
 static INDEX_LOCAL_PATH: &'static str = "crates.io-index";
 
-
-#[derive(RustcDecodable)]
-#[allow(dead_code)]
-struct CrateInfo {
-    name: String,
-    vers: String,
-    deps: Vec<DepInfo>,
-    cksum: String,
-    features: HashMap<String, Vec<String>>,
-    yanked: bool,
-}
-
-#[derive(RustcDecodable)]
-#[allow(dead_code)]
-struct DepInfo {
-    name: String,
-    req: String,
-    features: Vec<String>,
-    optional: bool,
-    default_features: bool,
-    target: Option<String>,
-    kind: Option<String>
-}
-
-fn build_dependency_map() -> HashMap<String, Vec<String>> {
-    let mut match_options = glob::MatchOptions::new();
-    match_options.require_literal_leading_dot = true;
-
-    let index_paths1 = glob::glob_with("crates.io-index/*/*/*", &match_options).unwrap();
-    let index_paths2 = glob::glob_with("crates.io-index/[12]/*", &match_options).unwrap();
-
-    let index_paths = index_paths1.chain(index_paths2);
-
-    let mut map = HashMap::new();
-
-    for glob_result in index_paths {
-        let index_path = glob_result.unwrap();
-        let file = fs::File::open(&index_path).unwrap();
-        let last_line = BufReader::new(file).lines().last().unwrap().unwrap();
-        let crate_info: CrateInfo = rustc_serialize::json::decode(&last_line).unwrap();
-        let deps_names = crate_info.deps.iter().map(|d| d.name.clone()).collect();
-        map.insert(crate_info.name, deps_names);
-    }
-
-    map
-}
 
 fn build_dot(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8> {
     let mut crate_names = vec![crate_name];
@@ -91,12 +54,13 @@ fn build_dot(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8
 }
 
 fn main() {
-    if fs::metadata(INDEX_LOCAL_PATH).is_err() {
+    let index = crates_index::CratesIndex::new(INDEX_LOCAL_PATH.into());
+    if !index.exists() {
         println!("Cloning crates.io-index");
-        git2::Repository::clone(INDEX_GIT_URL, INDEX_LOCAL_PATH).unwrap();
+        index.clone_index();
     }
 
-    let dep_map = build_dependency_map();
+    let dep_map = index.dependency_map();
 
     let port = match env::var("PORT") {
         Ok(p) => p.parse::<u16>().unwrap(),

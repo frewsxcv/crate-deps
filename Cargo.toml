@@ -4,7 +4,5 @@ version = "0.1.0"
 authors = ["Corey Farwell <coreyf@rwell.org>"]
 
 [dependencies]
-git2 = "*"
-glob = "*"
-rustc-serialize = "*"
+crates-index = "*"
 tiny_http = "*"
