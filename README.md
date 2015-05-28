@@ -17,3 +17,7 @@ Generates images of dependency graphs for crates on crates.io
 ```
 heroku buildpacks:set https://github.com/ddollar/heroku-buildpack-multi.git
 ```
+
+## License
+
+Licensed under version 2 of the Apache license.
