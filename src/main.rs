@@ -78,8 +78,8 @@ fn main() {
             let crate_name = req.get_url().trim_left_matches("/");
             if dep_map.get(crate_name).is_some() {
                 let data = build_dot(crate_name, &dep_map);
-                let res = tiny_http::Response::from_data(data);
-                res.with_header("Content-Type: image/png".parse::<tiny_http::Header>().unwrap())
+                let content_type_header = "Content-Type: image/png".parse::<tiny_http::Header>().unwrap();
+                tiny_http::Response::from_data(data).with_header(content_type_header)
             } else {
                 tiny_http::Response::from_string("could not find crate")
             }
