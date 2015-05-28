@@ -17,6 +17,8 @@ use std::env;
 use std::io::{Write, Read};
 use std::process::{Command, Stdio};
 
+use tiny_http::{Header, Response};
+
 extern crate crates_index;
 extern crate tiny_http;
 
@@ -78,10 +80,10 @@ fn main() {
             let crate_name = req.get_url().trim_left_matches("/");
             if dep_map.get(crate_name).is_some() {
                 let data = build_dot(crate_name, &dep_map);
-                let content_type_header = "Content-Type: image/png".parse::<tiny_http::Header>().unwrap();
-                tiny_http::Response::from_data(data).with_header(content_type_header)
+                let content_type_header = "Content-Type: image/png".parse::<Header>().unwrap();
+                Response::from_data(data).with_header(content_type_header)
             } else {
-                tiny_http::Response::from_string("could not find crate")
+                Response::from_string("could not find crate")
             }
         };
         req.respond(response);
