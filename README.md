@@ -6,9 +6,13 @@ Generates images of dependency graphs for crates on crates.io
 
 ### Hyper
 
+[crate-deps.herokuapp.com/hyper](https://crate-deps.herokuapp.com/hyper)
+
 ![](https://crate-deps.herokuapp.com/hyper)
 
 ### Piston
+
+[crate-deps.herokuapp.com/piston](https://crate-deps.herokuapp.com/piston)
 
 ![](https://crate-deps.herokuapp.com/piston)
 
