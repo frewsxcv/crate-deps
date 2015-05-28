@@ -1,1 +1,1 @@
-web: target/release/cargo-deps
+web: target/release/crate-deps
