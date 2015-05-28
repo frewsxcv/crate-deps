@@ -17,6 +17,8 @@
  *  * add watermark? url to repo?
  *  * specify root node
  *  * specify node labels
+ *  * update git repo?
+ *  * serverside caching? redis?
  */
 
 use std::collections::{HashMap, HashSet};
