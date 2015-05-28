@@ -87,7 +87,9 @@ fn main() {
             if dep_map.get(crate_name).is_some() {
                 let data = build_dot(crate_name, &dep_map);
                 let content_type_header = "Content-Type: image/png".parse::<Header>().unwrap();
+                let cache_control_header = "cache-control: no-cache".parse::<Header>().unwrap();
                 Response::from_data(data).with_header(content_type_header)
+                                         .with_header(cache_control_header)
             } else {
                 Response::from_string("could not find crate").with_status_code(400)
             }
