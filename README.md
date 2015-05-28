@@ -12,7 +12,13 @@ Generates images of dependency graphs for crates on crates.io
 
 ![](https://crate-deps.herokuapp.com/piston)
 
-## Heroku Buildpack
+## Setup
+
+```
+cargo run
+```
+
+To deploy to Heroku, make sure to set the buildpack as follows:
 
 ```
 heroku buildpacks:set https://github.com/ddollar/heroku-buildpack-multi.git
