@@ -83,7 +83,7 @@ fn main() {
                 let content_type_header = "Content-Type: image/png".parse::<Header>().unwrap();
                 Response::from_data(data).with_header(content_type_header)
             } else {
-                Response::from_string("could not find crate")
+                Response::from_string("could not find crate").with_status_code(400)
             }
         };
         req.respond(response);
