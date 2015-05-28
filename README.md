@@ -16,6 +16,13 @@ Generates images of dependency graphs for crates on crates.io
 
 ![](https://crate-deps.herokuapp.com/piston)
 
+## Built with
+
+This project was built using these libraries:
+
+* [tiny-http](https://github.com/frewsxcv/tiny-http)
+* [rust-crates-index](https://github.com/frewsxcv/rust-crates-index)
+
 ## Setup
 
 ```
