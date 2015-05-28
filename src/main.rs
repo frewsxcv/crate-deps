@@ -12,6 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/* TODO:
+ *  * redirect root url
+ *  * add watermark? url to repo?
+ *  * specify root node
+ *  * specify node labels
+ */
+
 use std::collections::{HashMap, HashSet};
 use std::env;
 use std::io::{Write, Read};
