@@ -74,12 +74,15 @@ fn main() {
 
     println!("Server listening on port {}", port);
     for req in server.incoming_requests() {
-        let response = if dep_map.get(req.get_url().trim_left_matches("/")).is_some() {
-            let data = build_dot(req.get_url().trim_left_matches("/"), &dep_map);
-            let res = tiny_http::Response::from_data(data);
-            res.with_header("Content-Type: image/png".parse::<tiny_http::Header>().unwrap())
-        } else {
-            tiny_http::Response::from_string("could not find crate")
+        let response = {
+            let crate_name = req.get_url().trim_left_matches("/");
+            if dep_map.get(crate_name).is_some() {
+                let data = build_dot(crate_name, &dep_map);
+                let res = tiny_http::Response::from_data(data);
+                res.with_header("Content-Type: image/png".parse::<tiny_http::Header>().unwrap())
+            } else {
+                tiny_http::Response::from_string("could not find crate")
+            }
         };
         req.respond(response);
     }
