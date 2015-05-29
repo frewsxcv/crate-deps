@@ -32,14 +32,43 @@ extern crate tiny_http;
 static INDEX_LOCAL_PATH: &'static str = "crates.io-index";
 
 
+struct DotBuilder {
+    buf: String,
+}
+
+impl DotBuilder {
+    fn new_digraph(name: &str) -> Self {
+        DotBuilder{buf: format!("digraph \"{}\" {}", name, "{")}
+    }
+
+    fn set_ratio(&mut self, ratio: &str) {
+        self.buf.push_str(&format!("ratio={};", ratio))
+    }
+
+    fn set_node_attrs(&mut self, node: &str, attrs: &str) {
+        self.buf.push_str(&format!("\"{}\" [{}];", node, attrs));
+    }
+
+    fn add_edge(&mut self, from: &str, to: &str) {
+        self.buf.push_str(&format!("\"{}\" -> \"{}\";", from, to));
+    }
+
+    fn finish(&mut self) {
+        self.buf.push_str("}");
+    }
+
+    fn as_bytes(&self) -> &[u8] {
+       self.buf.as_bytes()
+    }
+}
+
+
 fn build_dot(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8> {
     let mut crate_names = vec![crate_name];
 
-    let mut dot = String::new();
-    dot.push_str("digraph graphname {");
-    dot.push_str("ratio=0.75;");
-
-    dot.push_str(&format!("\"{}\" [root=true,style=filled,fillcolor=grey]", crate_name));
+    let mut dot = DotBuilder::new_digraph(crate_name);
+    dot.set_ratio("0.75");
+    dot.set_node_attrs(crate_name, "root=true,style=filled,fillcolor=grey");
 
     // Which dependencies we've already seen
     let mut seen_set = HashSet::new();
@@ -50,13 +79,13 @@ fn build_dot(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8
         }
         seen_set.insert(crate_name);
         for crate_dep in dep_map.get(crate_name).unwrap() {
-            dot.push_str(&format!("\"{}\" -> \"{}\";", crate_name, crate_dep));
+            dot.add_edge(crate_name, crate_dep);
             if !seen_set.contains(crate_dep as &str) {
                 crate_names.push(crate_dep);
             }
         }
     }
-    dot.push_str("}");
+    dot.finish();
 
     let child = Command::new("dot").arg("-Tpng").stdin(Stdio::piped()).stdout(Stdio::piped()).spawn().unwrap();
     child.stdin.unwrap().write_all(dot.as_bytes()).unwrap();
