@@ -9,7 +9,9 @@ To use, make sure your crate:
 * has at least one dependency
 * is uploaded to crates.io
 
-Then, to generate an image, just go to: `https://crate-deps.herokuapp.com/<your crate name here>`
+Then, to generate an image, just go to:
+
+`https://crate-deps.herokuapp.com/<your crate name here>`
 
 ## Examples
 
