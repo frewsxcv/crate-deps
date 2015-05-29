@@ -13,7 +13,6 @@
 // limitations under the License.
 
 /* TODO:
- *  * redirect root url
  *  * add watermark? url to repo?
  *  * update git repo?
  *  * serverside caching? redis?
@@ -116,7 +115,12 @@ fn main() {
     for req in server.incoming_requests() {
         let response = {
             let crate_name = req.url().trim_left_matches("/");
-            if dep_map.get(crate_name).is_some() {
+            if crate_name.is_empty() {
+                let location_header = "Location: https://github.com/frewsxcv/crate-deps".parse::<Header>().unwrap();
+                // FIXME: use Response::empty() instead of Response::from_string()
+                Response::from_string("").with_status_code(302)
+                                         .with_header(location_header)
+            } else if dep_map.get(crate_name).is_some() {
                 let data = build_dot_png(crate_name, &dep_map);
                 let content_type_header = "Content-Type: image/png".parse::<Header>().unwrap();
                 let cache_control_header = "cache-control: no-cache".parse::<Header>().unwrap();
