@@ -123,7 +123,8 @@ fn main() {
                 Response::from_data(data).with_header(content_type_header)
                                          .with_header(cache_control_header)
             } else {
-                Response::from_string("could not find crate").with_status_code(400)
+                let error = format!("could not find crate (that has dependencies) titled: '{}'", crate_name);
+                Response::from_string(error).with_status_code(400)
             }
         };
         req.respond(response);
