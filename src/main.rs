@@ -57,8 +57,14 @@ impl DotBuilder {
         self.buf.push_str("}");
     }
 
-    fn as_bytes(&self) -> &[u8] {
-       self.buf.as_bytes()
+    fn png_bytes(&self) -> Vec<u8> {
+        let child = Command::new("dot").arg("-Tpng")
+                                       .stdin(Stdio::piped()).stdout(Stdio::piped())
+                                       .spawn().unwrap();
+        child.stdin.unwrap().write_all(self.buf.as_bytes()).unwrap();
+        let mut ret = vec![];
+        child.stdout.unwrap().read_to_end(&mut ret).unwrap();
+        ret
     }
 }
 
@@ -87,12 +93,7 @@ fn build_dot(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8
     }
     dot.finish();
 
-    let child = Command::new("dot").arg("-Tpng").stdin(Stdio::piped()).stdout(Stdio::piped()).spawn().unwrap();
-    child.stdin.unwrap().write_all(dot.as_bytes()).unwrap();
-
-    let mut ret = vec![];
-    child.stdout.unwrap().read_to_end(&mut ret).unwrap();
-    ret
+    dot.png_bytes()
 }
 
 fn main() {
