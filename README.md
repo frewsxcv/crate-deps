@@ -25,6 +25,8 @@ This project was built using these libraries:
 
 ## Setup
 
+To run the server locally:
+
 ```
 cargo run
 ```
