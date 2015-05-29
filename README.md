@@ -4,33 +4,31 @@ Generates images of dependency graphs for crates on crates.io
 
 ## Examples
 
-### rust-rss
-
-### tiny_http
+### [tiny_http](https://crates.io/crates/tiny_http)
 
 [crate-deps.herokuapp.com/tiny_http](https://crate-deps.herokuapp.com/tiny_http)
 
 ![](https://crate-deps.herokuapp.com/tiny_http)
 
-### glutin
+### [glutin](https://crates.io/crates/glutin)
 
 [crate-deps.herokuapp.com/glutin](https://crate-deps.herokuapp.com/glutin)
 
 ![](https://crate-deps.herokuapp.com/glutin)
 
-### geojson
+### [geojson](https://crates.io/crates/geojson)
 
 [crate-deps.herokuapp.com/geojson](https://crate-deps.herokuapp.com/geojson)
 
 ![](https://crate-deps.herokuapp.com/geojson)
 
-### hyper
+### [hyper](https://crates.io/crates/yper)
 
 [crate-deps.herokuapp.com/hyper](https://crate-deps.herokuapp.com/hyper)
 
 ![](https://crate-deps.herokuapp.com/hyper)
 
-### piston
+### [piston](https://crates.io/crates/piston)
 
 [crate-deps.herokuapp.com/piston](https://crate-deps.herokuapp.com/piston)
 
