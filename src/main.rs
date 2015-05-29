@@ -39,7 +39,7 @@ fn build_dot(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8
     dot.push_str("digraph graphname {");
     dot.push_str("ratio=0.75;");
 
-    dot.push_str(&format!("\"{}\" [root=true]", crate_name));
+    dot.push_str(&format!("\"{}\" [root=true,style=filled,fillcolor=grey]", crate_name));
 
     // Which dependencies we've already seen
     let mut seen_set = HashSet::new();
