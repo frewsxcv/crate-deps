@@ -24,13 +24,13 @@ Generates images of dependency graphs for crates on crates.io
 
 ![](https://crate-deps.herokuapp.com/geojson)
 
-### Hyper
+### hyper
 
 [crate-deps.herokuapp.com/hyper](https://crate-deps.herokuapp.com/hyper)
 
 ![](https://crate-deps.herokuapp.com/hyper)
 
-### Piston
+### piston
 
 [crate-deps.herokuapp.com/piston](https://crate-deps.herokuapp.com/piston)
 
