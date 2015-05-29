@@ -50,7 +50,7 @@ fn build_dot(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8
         }
         seen_set.insert(crate_name);
         for crate_dep in dep_map.get(crate_name).unwrap() {
-            dot.push_str(&format!("{} -> {};", crate_name.replace("-", "_"), crate_dep.replace("-", "_")));
+            dot.push_str(&format!("\"{}\" -> \"{}\";", crate_name, crate_dep));
             if !seen_set.contains(crate_dep as &str) {
                 crate_names.push(crate_dep);
             }
