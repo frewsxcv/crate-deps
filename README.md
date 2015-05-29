@@ -2,6 +2,15 @@
 
 Generates images of dependency graphs for crates on crates.io
 
+## Usage
+
+To use, make sure your crate:
+
+* has at least one dependency
+* is uploaded to crates.io
+
+Then, to generate an image, just go to: `https://crate-deps.herokuapp.com/<your crate name here>`
+
 ## Examples
 
 ### [tiny_http](https://crates.io/crates/tiny_http)
