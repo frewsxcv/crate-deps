@@ -1,4 +1,4 @@
-# cargo-deps
+# crate-deps
 
 A web service that generates images of dependency graphs for crates hosted on crates.io
 
