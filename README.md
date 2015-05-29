@@ -37,4 +37,6 @@ heroku buildpacks:set https://github.com/ddollar/heroku-buildpack-multi.git
 
 ## License
 
-Licensed under version 2 of the Apache license.
+All files found in this repository are licensed under version 2 of the Apache license.
+
+All images generated using crate-deps.herokupapp.com are licensed under [CC0](https://creativecommons.org/publicdomain/zero/1.0/)
