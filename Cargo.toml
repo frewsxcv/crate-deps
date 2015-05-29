@@ -1,5 +1,6 @@
 [package]
 name = "crate-deps"
+description = "A web service that generates images of dependency graphs for crates hosted on crates.io"
 version = "0.1.0"
 authors = ["Corey Farwell <coreyf@rwell.org>"]
 license = "Apache-2.0"
