@@ -2,7 +2,7 @@
 
 Generates images of dependency graphs for crates on crates.io
 
-## Example
+## Examples
 
 ### Hyper
 
