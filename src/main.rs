@@ -69,7 +69,7 @@ impl DotBuilder {
 }
 
 
-fn build_dot(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8> {
+fn build_dot_png(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8> {
     let mut crate_names = vec![crate_name];
 
     let mut dot = DotBuilder::new_digraph(crate_name);
@@ -117,7 +117,7 @@ fn main() {
         let response = {
             let crate_name = req.url().trim_left_matches("/");
             if dep_map.get(crate_name).is_some() {
-                let data = build_dot(crate_name, &dep_map);
+                let data = build_dot_png(crate_name, &dep_map);
                 let content_type_header = "Content-Type: image/png".parse::<Header>().unwrap();
                 let cache_control_header = "cache-control: no-cache".parse::<Header>().unwrap();
                 Response::from_data(data).with_header(content_type_header)
