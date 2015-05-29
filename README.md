@@ -1,6 +1,11 @@
 # cargo-deps
 
-Generates images of dependency graphs for crates on crates.io
+A web service that generates images of dependency graphs for crates hosted on crates.io
+
+This project is built entirely in Rust using these libraries:
+
+* [tiny-http](https://github.com/frewsxcv/tiny-http)
+* [rust-crates-index](https://github.com/frewsxcv/rust-crates-index)
 
 ## Usage
 
@@ -44,13 +49,6 @@ Then, to generate an image, just go to:
 [crate-deps.herokuapp.com/piston](https://crate-deps.herokuapp.com/piston)
 
 ![](https://crate-deps.herokuapp.com/piston)
-
-## Built with
-
-This project was built using these libraries:
-
-* [tiny-http](https://github.com/frewsxcv/tiny-http)
-* [rust-crates-index](https://github.com/frewsxcv/rust-crates-index)
 
 ## Setup
 
