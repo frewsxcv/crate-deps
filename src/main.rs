@@ -29,6 +29,7 @@ extern crate crates_index;
 extern crate tiny_http;
 
 static INDEX_LOCAL_PATH: &'static str = "crates.io-index";
+static ROOT_REDIRECT_URL: &'static str = "https://github.com/frewsxcv/crate-deps";
 
 
 struct DotBuilder {
@@ -116,7 +117,8 @@ fn main() {
         let response = {
             let crate_name = req.url().trim_left_matches("/");
             if crate_name.is_empty() {
-                let location_header = "Location: https://github.com/frewsxcv/crate-deps".parse::<Header>().unwrap();
+                let location_string = format!("Location: {}", ROOT_REDIRECT_URL);
+                let location_header = location_string.parse::<Header>().unwrap();
                 // FIXME: use Response::empty() instead of Response::from_string()
                 Response::from_string("").with_status_code(302)
                                          .with_header(location_header)
