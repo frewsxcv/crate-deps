@@ -8,3 +8,4 @@ license = "Apache-2.0"
 [dependencies]
 crates-index = "*"
 tiny_http = "*"
+dotty = "*"

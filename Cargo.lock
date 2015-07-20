@@ -3,6 +3,7 @@ name = "crate-deps"
 version = "0.1.0"
 dependencies = [
  "crates-index 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "dotty 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "tiny_http 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -30,6 +31,11 @@ dependencies = [
  "glob 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustc-serialize 0.3.15 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
+
+[[package]]
+name = "dotty"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "encoding"

@@ -20,53 +20,16 @@
 
 use std::collections::{HashMap, HashSet};
 use std::env;
-use std::io::{Write, Read};
-use std::process::{Command, Stdio};
 
+use dotty::DotBuilder;
 use tiny_http::{Header, Response};
 
 extern crate crates_index;
+extern crate dotty;
 extern crate tiny_http;
 
 static INDEX_LOCAL_PATH: &'static str = "crates.io-index";
 static ROOT_REDIRECT_URL: &'static str = "https://github.com/frewsxcv/crate-deps";
-
-
-struct DotBuilder {
-    buf: String,
-}
-
-impl DotBuilder {
-    fn new_digraph(name: &str) -> Self {
-        DotBuilder{buf: format!("digraph \"{}\" {}", name, "{")}
-    }
-
-    fn set_ratio(&mut self, ratio: &str) {
-        self.buf.push_str(&format!("ratio={};", ratio))
-    }
-
-    fn set_node_attrs(&mut self, node: &str, attrs: &str) {
-        self.buf.push_str(&format!("\"{}\" [{}];", node, attrs));
-    }
-
-    fn add_edge(&mut self, from: &str, to: &str) {
-        self.buf.push_str(&format!("\"{}\" -> \"{}\";", from, to));
-    }
-
-    fn finish(&mut self) {
-        self.buf.push_str("}");
-    }
-
-    fn png_bytes(&self) -> Vec<u8> {
-        let child = Command::new("dot").arg("-Tpng")
-                                       .stdin(Stdio::piped()).stdout(Stdio::piped())
-                                       .spawn().unwrap();
-        child.stdin.unwrap().write_all(self.buf.as_bytes()).unwrap();
-        let mut ret = vec![];
-        child.stdout.unwrap().read_to_end(&mut ret).unwrap();
-        ret
-    }
-}
 
 
 fn build_dot_png(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8> {
