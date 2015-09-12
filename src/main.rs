@@ -18,7 +18,7 @@
  *  * serverside caching? redis?
  */
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::env;
 
 use dotty::DotBuilder;
@@ -32,25 +32,33 @@ static INDEX_LOCAL_PATH: &'static str = "crates.io-index";
 static ROOT_REDIRECT_URL: &'static str = "https://github.com/frewsxcv/crate-deps";
 
 
-fn build_dot_png(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Vec<u8> {
-    let mut crate_names = vec![crate_name];
+fn build_dot_png(crate_: crates_index::Crate, index: &crates_index::Index) -> Vec<u8> {
+    let crate_name = {
+        let version = &crate_.latest_version();
+        version.name.clone()
+    };
 
-    let mut dot = DotBuilder::new_digraph(crate_name);
+    let mut crates = vec![crate_];
+
+    let mut dot = DotBuilder::new_digraph(&crate_name);
     dot.set_ratio("0.75");
-    dot.set_node_attrs(crate_name, "root=true,style=filled,fillcolor=grey");
+    dot.set_node_attrs(&crate_name, "root=true,style=filled,fillcolor=grey");
 
     // Which dependencies we've already seen
     let mut seen_set = HashSet::new();
 
-    while let Some(crate_name) = crate_names.pop() {
-        if seen_set.contains(crate_name as &str) {
+    while let Some(crate_) = crates.pop() {
+        // TODO: this shouldn't always look up the latest version for the dependencies
+        let version = crate_.latest_version();
+
+        if seen_set.contains(&version.name) {
             continue;
         }
-        seen_set.insert(crate_name);
-        for crate_dep in dep_map.get(crate_name).unwrap() {
-            dot.add_edge(crate_name, crate_dep);
-            if !seen_set.contains(crate_dep as &str) {
-                crate_names.push(crate_dep);
+        seen_set.insert(version.name.clone());
+        for dep in &version.deps {
+            dot.add_edge(&version.name, &dep.name);
+            if !seen_set.contains(&dep.name) {
+                crates.push(index.crate_(&dep.name).unwrap());
             }
         }
     }
@@ -60,13 +68,11 @@ fn build_dot_png(crate_name: &str, dep_map: &HashMap<String, Vec<String>>) -> Ve
 }
 
 fn main() {
-    let index = crates_index::CratesIndex::new(INDEX_LOCAL_PATH.into());
+    let index = crates_index::Index::new(INDEX_LOCAL_PATH.into());
     if !index.exists() {
         println!("Cloning crates.io-index");
-        index.clone_index();
+        index.clone().unwrap();
     }
-
-    let dep_map = index.dependency_map();
 
     let port = match env::var("PORT") {
         Ok(p) => p.parse::<u16>().unwrap(),
@@ -85,8 +91,8 @@ fn main() {
                 // FIXME: use Response::empty() instead of Response::from_string()
                 Response::from_string("").with_status_code(302)
                                          .with_header(location_header)
-            } else if dep_map.get(crate_name).is_some() {
-                let data = build_dot_png(crate_name, &dep_map);
+            } else if let Some(crate_) = index.crate_(crate_name) {
+                let data = build_dot_png(crate_, &index);
                 let content_type_header = "Content-Type: image/png".parse::<Header>().unwrap();
                 let cache_control_header = "cache-control: no-cache".parse::<Header>().unwrap();
                 Response::from_data(data).with_header(content_type_header)
