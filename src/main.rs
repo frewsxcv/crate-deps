@@ -34,8 +34,8 @@ static ROOT_REDIRECT_URL: &'static str = "https://github.com/frewsxcv/crate-deps
 
 fn build_dot_png(crate_: crates_index::Crate, index: &crates_index::Index) -> Vec<u8> {
     let crate_name = {
-        let version = &crate_.latest_version();
-        version.name.clone()
+        let version = crate_.latest_version();
+        version.name().to_owned()
     };
 
     let mut crates = vec![crate_];
@@ -49,16 +49,16 @@ fn build_dot_png(crate_: crates_index::Crate, index: &crates_index::Index) -> Ve
 
     while let Some(crate_) = crates.pop() {
         // TODO: this shouldn't always look up the latest version for the dependencies
-        let version = crate_.latest_version();
+        let version = crate_.latest_version().to_owned();
 
-        if seen_set.contains(&version.name) {
+        if seen_set.contains(version.name()) {
             continue;
         }
-        seen_set.insert(version.name.clone());
-        for dep in &version.deps {
-            dot.add_edge(&version.name, &dep.name);
-            if !seen_set.contains(&dep.name) {
-                crates.push(index.crate_(&dep.name).unwrap());
+        seen_set.insert(version.name().to_owned());
+        for dep in version.dependencies() {
+            dot.add_edge(&version.name(), &dep.name());
+            if !seen_set.contains(dep.name()) {
+                crates.push(index.crate_(dep.name()).unwrap());
             }
         }
     }
