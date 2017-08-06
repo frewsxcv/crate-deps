@@ -38,7 +38,7 @@ Then, to generate an image, just go to:
 
 ![](https://crate-deps.herokuapp.com/geojson)
 
-### [hyper](https://crates.io/crates/yper)
+### [hyper](https://crates.io/crates/hyper)
 
 [crate-deps.herokuapp.com/hyper](https://crate-deps.herokuapp.com/hyper)
 
